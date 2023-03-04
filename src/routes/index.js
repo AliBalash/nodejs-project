@@ -1,5 +1,5 @@
 const express = require('express');
-
+const passport = require('passport');
 const router = express.Router();
 
 
@@ -11,16 +11,17 @@ router.get('/', (req, res, nex) => {
 
 
 router.get('/singup', (req, res, next) => {
-
     res.render('singup')
 })
 
-router.post('/singup', (req, res) => {
+router.post('/singup', passport.authenticate('local-signup' , {
+    successRedirect : '/profile',
+    failureRedirect  : '/singup',
+    passReqToCallback : true
+}));
 
-        console.log(req.body)
-        res.send('Recive')
-
-
+router.get('/profile' , (req , res , next) =>{
+    res.render('profile')
 })
 
 

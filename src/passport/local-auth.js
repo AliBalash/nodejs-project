@@ -1,10 +1,25 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const User = require('../models/user');
+
+passport.serializeUser((user , done )=>{
+    done(null , user.id)
+});
+
+passport.deserializeUser( async (id , done)=>{
+    const user  = await User.findById(id);
+    done(null , user)
+})
 
 passport.use('local-signup' , new LocalStrategy({
     usernameField : 'email' ,
     passwordField : 'password',
     passReqToCallback : true
-} , (req , email , password , done)=>{
-    
+} , async (req , email , password , done)=>{
+    const newUser= new User();
+    newUser.email = email,
+    newUser.password = newUser.bcryptPassword(password)
+    await newUser.save();
+    done(null , newUser)
+
 }))
